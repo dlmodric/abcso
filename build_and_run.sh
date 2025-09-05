@@ -50,18 +50,18 @@ get_library_extension() {
 
 # 检查 Windows 依赖
 check_windows_dependencies() {
-    local missing_deps=()
+    local missing_deps=""
     
     # 检查 Visual Studio 或 MinGW
-    if ! command -v cl &> /dev/null && ! command -v gcc &> /dev/null; then
-        missing_deps+=("C++ compiler")
+    if ! command -v cl >/dev/null 2>&1 && ! command -v gcc >/dev/null 2>&1; then
+        missing_deps="$missing_deps C++ compiler"
     fi
-    if ! command -v make &> /dev/null && ! command -v nmake &> /dev/null && ! command -v mingw32-make &> /dev/null; then
-        missing_deps+=("Make utility")
+    if ! command -v make >/dev/null 2>&1 && ! command -v nmake >/dev/null 2>&1 && ! command -v mingw32-make >/dev/null 2>&1; then
+        missing_deps="$missing_deps Make utility"
     fi
     
-    if [ ${#missing_deps[@]} -ne 0 ]; then
-        echo "Missing build dependencies: ${missing_deps[*]}"
+    if [ -n "$missing_deps" ]; then
+        echo "Missing build dependencies:$missing_deps"
         echo "Please install one of the following:"
         echo "  Option 1: Visual Studio Community (with C++ workload)"
         echo "  Option 2: MinGW-w64 (https://www.mingw-w64.org/)"
@@ -74,21 +74,21 @@ check_windows_dependencies() {
 # 检查 Linux 依赖
 check_linux_dependencies() {
     local distro=$(detect_linux_distro)
-    local missing_deps=()
+    local missing_deps=""
     
     # 检查基本构建工具
-    if ! command -v gcc &> /dev/null; then
-        missing_deps+=("gcc")
+    if ! command -v gcc >/dev/null 2>&1; then
+        missing_deps="$missing_deps gcc"
     fi
-    if ! command -v g++ &> /dev/null; then
-        missing_deps+=("g++")
+    if ! command -v g++ >/dev/null 2>&1; then
+        missing_deps="$missing_deps g++"
     fi
-    if ! command -v make &> /dev/null; then
-        missing_deps+=("make")
+    if ! command -v make >/dev/null 2>&1; then
+        missing_deps="$missing_deps make"
     fi
     
-    if [ ${#missing_deps[@]} -ne 0 ]; then
-        echo "Missing build dependencies: ${missing_deps[*]}"
+    if [ -n "$missing_deps" ]; then
+        echo "Missing build dependencies:$missing_deps"
         echo "Please install them using:"
         case $distro in
             "ubuntu"|"debian")
@@ -112,7 +112,7 @@ check_linux_dependencies() {
 
 # 检查CMake是否安装
 check_cmake() {
-    if ! command -v cmake &> /dev/null; then
+    if ! command -v cmake >/dev/null 2>&1; then
         local os=$(detect_os)
         echo "CMake not found. Please install CMake first:"
         case $os in
