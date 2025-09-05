@@ -2,13 +2,13 @@
 
 # 检测操作系统
 detect_os() {
-    if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "linux"* ]]; then
+    if echo "$OSTYPE" | grep -q "^linux-gnu" || echo "$OSTYPE" | grep -q "^linux"; then
         echo "linux"
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
+    elif echo "$OSTYPE" | grep -q "^darwin"; then
         echo "macos"
-    elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "win32" ]]; then
+    elif [ "$OSTYPE" = "msys" ] || [ "$OSTYPE" = "cygwin" ] || [ "$OSTYPE" = "win32" ]; then
         echo "windows"
-    elif [[ -n "$WINDIR" ]] || [[ -n "$OS" ]]; then
+    elif [ -n "$WINDIR" ] || [ -n "$OS" ]; then
         echo "windows"
     else
         echo "unknown"
@@ -17,12 +17,12 @@ detect_os() {
 
 # 检测 Linux 发行版
 detect_linux_distro() {
-    if [[ -f /etc/os-release ]]; then
+    if [ -f /etc/os-release ]; then
         . /etc/os-release
         echo "$ID"
-    elif [[ -f /etc/redhat-release ]]; then
+    elif [ -f /etc/redhat-release ]; then
         echo "rhel"
-    elif [[ -f /etc/debian_version ]]; then
+    elif [ -f /etc/debian_version ]; then
         echo "debian"
     else
         echo "unknown"
@@ -165,9 +165,9 @@ check_cmake() {
 
 # 检查依赖
 os=$(detect_os)
-if [[ "$os" == "linux" ]]; then
+if [ "$os" = "linux" ]; then
     check_linux_dependencies
-elif [[ "$os" == "windows" ]]; then
+elif [ "$os" = "windows" ]; then
     check_windows_dependencies
 fi
 check_cmake
@@ -218,7 +218,7 @@ PLUGIN_PATH="../../../project_b/build/lib/libplugin_b${LIB_EXT}"
 echo "Using plugin path: $PLUGIN_PATH"
 
 # Linux 特定的调试信息
-if [[ "$(detect_os)" == "linux" ]]; then
+if [ "$(detect_os)" = "linux" ]; then
     echo "Linux system detected. Checking dependencies..."
     echo "ldd version: $(ldd --version 2>/dev/null | head -n1 || echo 'ldd not found')"
     echo "Library dependencies:"
